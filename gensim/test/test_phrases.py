@@ -646,6 +646,19 @@ class TestPhraserModelCommonTerms(CommonTermsPhrasesData, TestPhraserModel):
         self.assertTrue(isinstance(transformed, six.text_type))
 
 
+class TestPhraserModelCompatibilty(unittest.TestCase):
+
+    def TestCompatibilty(self):
+        with temporary_file("phraser_model_3dot6") as fpath:
+            bigram_loaded = Phraser.load(fpath)
+            test_sentences = [u'trees', u'graph', u'minors']
+            prev_ver = bigram_loaded(test_sentences)
+            phrase_model = Phrases(test_sentences, threshold=1)
+            bigram = Phraser(phrase_model)
+            curr_ver = bigram(test_sentences)
+            self.assertEqual(prev_ver, curr_ver)
+
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
     unittest.main()
