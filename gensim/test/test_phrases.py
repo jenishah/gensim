@@ -14,11 +14,17 @@ import unittest
 import six
 
 import numpy as np
-
+from gensim.models.word2vec import Text8Corpus
+import sys
+sys.path.append(r'C:\Users\jshah02\Desktop\gensim\gensim-develop')
+# from gensim-develop import gensim
 from gensim.utils import to_unicode
 from gensim.models.phrases import SentenceAnalyzer, Phrases, Phraser
 from gensim.models.phrases import pseudocorpus, original_scorer
 from gensim.test.utils import common_texts, temporary_file, datapath
+
+
+
 
 
 class TestUtils(unittest.TestCase):
@@ -648,15 +654,12 @@ class TestPhraserModelCommonTerms(CommonTermsPhrasesData, TestPhraserModel):
 
 class TestPhraserModelCompatibilty(unittest.TestCase):
 
-    def TestCompatibilty(self):
-        with temporary_file("phraser_model_3dot6") as fpath:
-            bigram_loaded = Phraser.load(fpath)
-            test_sentences = [u'trees', u'graph', u'minors']
-            prev_ver = bigram_loaded(test_sentences)
-            phrase_model = Phrases(test_sentences, threshold=1)
-            bigram = Phraser(phrase_model)
-            curr_ver = bigram(test_sentences)
-            self.assertEqual(prev_ver, curr_ver)
+    def testCompatibilty(self):
+        bigram_loaded = Phraser.load(datapath("phraser_model_3dot6"))
+        test_sentences = [u'trees', u'graph', u'minors']
+        prev_ver = bigram_loaded[test_sentences]
+        expected_res = ['trees_graph', 'minors']
+        self.assertEqual(prev_ver, expected_res)
 
 
 if __name__ == '__main__':
